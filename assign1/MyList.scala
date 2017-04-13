@@ -162,12 +162,6 @@ case class MyCons[A](x: A, xs: MyList[A]) extends MyList[A] {
   //def map[B](f: A => B): MyList[B] = //if (xs==None) MyList[B](x,MyNil[B]()) else MyLyist[B](x, xs)
   
   def map[B](f: A => B): MyList[B] = MyCons[B](f(x), xs.map(f))
-  
-//def myFlatMap[A, B](input: List[A], function: A => List[B]): List[B] =
-  //if (input.isEmpty) List() else function(input.head) ++ myFlatMap(input.tail, function)
-
-  //assert((myFlatMap(List(1, 2, 3), (i: Int) => List(i - 1, i, i + 1)) == //       List(0, 1, 2, 1, 2, 3, 2, 3, 4)))
-
 
   def flatMap[B](f: A => MyList[B]): MyList[B] = {
     val a:MyList[B] = f(x)
@@ -179,13 +173,33 @@ case class MyCons[A](x: A, xs: MyList[A]) extends MyList[A] {
 
   def append(other: MyList[A]): MyList[A] = MyCons[A](head, xs.append(other)) 
 
-  def foldLeft[B](initial: B)(f: (B, A) => B): B = ???
+  def foldLeft[B](initial: B)(f: (B, A) => B): B = {
+    val accum = f(initial,head)
+    xs.foldLeft(accum)(f)
+  }
 
-  def foldRight[B](initial: B)(f: (A, B) => B): B = ???
+  def foldRight[B](initial: B)(f: (A, B) => B): B = {
+    val accum = f(last, initial)
+    init.foldRight(accum)(f)
+  }
 
-  def take(n: Int): MyList[A] = ???
+  // MyList(2, 3).take(1) == MyList(2)
+  // MyList(2, 3).take(3) == MyList(2, 3)
+  def take(n: Int): MyList[A] = {
+    if (xs.length+1 <= n){
+      MyCons[A](x, xs.take(n))      
+    } else { 
+      MyCons[A](x, MyNil[A])
+    }
+  }
 
-  def drop(n: Int): MyList[A] = ???
+  def drop(n: Int): MyList[A] = {
+    if (xs.length+1 <= n){
+      xs.drop(n)     
+    } else { 
+      MyCons[A](x, xs.drop(n))
+    }
+  }
 
   def head: A = x //TODO 
 
@@ -220,13 +234,13 @@ case class MyNil[A]() extends MyList[A] {
 
   def append(other: MyList[A]): MyList[A] = other
 
-  def foldLeft[B](initial: B)(f: (B, A) => B): B = ???
+  def foldLeft[B](initial: B)(f: (B, A) => B): B = initial
 
-  def foldRight[B](initial: B)(f: (A, B) => B): B = ???
+  def foldRight[B](initial: B)(f: (A, B) => B): B = initial
 
-  def take(n: Int): MyList[A] = ???
+  def take(n: Int): MyList[A] = MyNil[A]()
 
-  def drop(n: Int): MyList[A] = ???
+  def drop(n: Int): MyList[A] = MyNil[A]()
 
   def head: A = throw new InvalidOperationException("head called on empty list")
 
