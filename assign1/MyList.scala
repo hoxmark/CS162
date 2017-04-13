@@ -186,20 +186,39 @@ case class MyCons[A](x: A, xs: MyList[A]) extends MyList[A] {
   // MyList(2, 3).take(1) == MyList(2)
   // MyList(2, 3).take(3) == MyList(2, 3)
   def take(n: Int): MyList[A] = {
-    if (xs.length+1 <= n){
-      MyCons[A](x, xs.take(n))      
-    } else { 
-      MyCons[A](x, MyNil[A])
-    }
+    //Ta n-1 for hver gang når n er 0 så er den done
+    if (n==1) MyCons[A](x, MyNil[A]()) else MyCons[A](x, xs.take((n-1)))
+
   }
 
+  //println("----- n = "+n)
+  //  if ((xs.length) < n){
+  //    println("if\t:"+xs.length)
+  //    MyCons[A](x, xs.take(n))      
+  //  } else { 
+  //    println("else\t:"+xs.length)      
+  //    MyCons[A](x, MyNil[A]())
+  //  }
+  //()()()()()  l=5   =
+  //()()        l=2   = 5-2 
+  //def take(n: Int): MyList[A] = {
+  //  if (length >= n){
+  //    MyCons[A](x,xs.take(n))
+  //  } else {
+  //    MyCons[A](x, MyNil[A]())
+  //  }
+  //}
+
   def drop(n: Int): MyList[A] = {
-    if (xs.length+1 <= n){
-      xs.drop(n)     
-    } else { 
-      MyCons[A](x, xs.drop(n))
-    }
-  }
+    if (n<=0) MyCons[A](x,xs.drop(n-1)) else xs.drop(n-1)
+  } 
+  //def drop(n: Int): MyList[A] = {
+  //  if (xs.length+1 <= n){
+  //    xs.drop(n)     
+  //  } else { 
+  //    MyCons[A](x, xs.drop(n))
+  //  }
+  //}
 
   def head: A = x //TODO 
 
@@ -209,16 +228,13 @@ case class MyCons[A](x: A, xs: MyList[A]) extends MyList[A] {
 
   def last: A = if (xs.isEmpty) x else xs.last
 
-  def safeHead: Option[A] = ???
+  def safeHead: Option[A] = Some(x)
 
-  def safeTail: Option[MyList[A]] = ???
+  def safeTail: Option[MyList[A]] = Some(tail)
 
   def isEmpty: Boolean = false
 
-  def length: Int = if (x==None) 0 else 1 + xs.length
-  //
-  //def myLength[A](list: List[A]): Int =
-  //if (list.isEmpty) 0 else 1 + myLength(list.tail)
+  def length: Int = (1 + xs.length)
 }
 
 // This is the empty list case, AKA Nil.
@@ -250,9 +266,9 @@ case class MyNil[A]() extends MyList[A] {
 
   def last: A = throw new InvalidOperationException("last called on empty list")
 
-  def safeHead: Option[A] = ???
+  def safeHead: Option[A] = None
 
-  def safeTail: Option[MyList[A]] = ???
+  def safeTail: Option[MyList[A]] = None
 
   def isEmpty: Boolean = true //TODO OK? 
 
