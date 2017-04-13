@@ -27,6 +27,8 @@ sealed trait MyList[A] {
   // function `f` on each element of the old list.  For example:
   //
   // MyList(1, 2, 3).map((i: Int) => i + 1) == MyList(2, 3, 4)
+  //if (input.isEmpty) List() else function(input.head) :: myMap(input.tail, function)
+
   def map[B](f: A => B): MyList[B]
 
   // `flatMap` behaves much like `map`, except it requires that
@@ -152,13 +154,30 @@ case class MyCons[A](x: A, xs: MyList[A]) extends MyList[A] {
   // Note: all the methods below are implicitly specialized for
   // non-empty lists, since these are defined on a Cons.
 
-  def map[B](f: A => B): MyList[B] = ???
+  // MyList(1, 2, 3).map((i: Int) => i + 1) == MyList(2, 3, 4)
 
-  def flatMap[B](f: A => MyList[B]): MyList[B] = ???
+  //def myMap[A, B](input: List[A], function: A => B): List[B] =
+  //if (input.isEmpty) List() else function(input.head) :: myMap(input.tail, function)
+  //Want to find: Expected: MyCons(2,MyCons(3,MyCons(4,MyNil())))
+  //def map[B](f: A => B): MyList[B] = //if (xs==None) MyList[B](x,MyNil[B]()) else MyLyist[B](x, xs)
+  
+  def map[B](f: A => B): MyList[B] = MyCons[B](f(x), xs.map(f))
+  
+//def myFlatMap[A, B](input: List[A], function: A => List[B]): List[B] =
+  //if (input.isEmpty) List() else function(input.head) ++ myFlatMap(input.tail, function)
 
-  def filter(pred: A => Boolean): MyList[A] = ???
+  //assert((myFlatMap(List(1, 2, 3), (i: Int) => List(i - 1, i, i + 1)) == //       List(0, 1, 2, 1, 2, 3, 2, 3, 4)))
 
-  def append(other: MyList[A]): MyList[A] = ???
+
+  def flatMap[B](f: A => MyList[B]): MyList[B] = {
+    val a:MyList[B] = f(x)
+    val b:MyList[B] = xs.flatMap(f)
+    a.append(b)
+  }
+
+  def filter(pred: A => Boolean): MyList[A] = if (pred(x)) MyCons[A](x, xs.filter(pred)) else xs.filter(pred)
+
+  def append(other: MyList[A]): MyList[A] = MyCons[A](head, xs.append(other)) 
 
   def foldLeft[B](initial: B)(f: (B, A) => B): B = ???
 
@@ -168,21 +187,24 @@ case class MyCons[A](x: A, xs: MyList[A]) extends MyList[A] {
 
   def drop(n: Int): MyList[A] = ???
 
-  def head: A = ???
+  def head: A = x //TODO 
 
-  def tail: MyList[A] = ???
+  def tail: MyList[A] = xs //TODO
 
-  def init: MyList[A] = ???
+  def init: MyList[A] = if (xs.isEmpty) MyNil[A]() else MyCons[A](x, xs.init)
 
-  def last: A = ???
+  def last: A = if (xs.isEmpty) x else xs.last
 
   def safeHead: Option[A] = ???
 
   def safeTail: Option[MyList[A]] = ???
 
-  def isEmpty: Boolean = ???
+  def isEmpty: Boolean = false
 
-  def length: Int = ???
+  def length: Int = if (x==None) 0 else 1 + xs.length
+  //
+  //def myLength[A](list: List[A]): Int =
+  //if (list.isEmpty) 0 else 1 + myLength(list.tail)
 }
 
 // This is the empty list case, AKA Nil.
@@ -190,13 +212,13 @@ case class MyNil[A]() extends MyList[A] {
   // Note: all the methods below are implicitly specialized for
   // empty lists, since these are defined on Nil
 
-  def map[B](f: A => B): MyList[B] = ???
+  def map[B](f: A => B): MyList[B] = MyNil[B]()
 
-  def flatMap[B](f: A => MyList[B]): MyList[B] = ???
+  def flatMap[B](f: A => MyList[B]): MyList[B] = MyNil[B]()
 
-  def filter(pred: A => Boolean): MyList[A] = ???
+  def filter(pred: A => Boolean): MyList[A] = MyNil[A]()
 
-  def append(other: MyList[A]): MyList[A] = ???
+  def append(other: MyList[A]): MyList[A] = other
 
   def foldLeft[B](initial: B)(f: (B, A) => B): B = ???
 
@@ -206,21 +228,21 @@ case class MyNil[A]() extends MyList[A] {
 
   def drop(n: Int): MyList[A] = ???
 
-  def head: A = ???
+  def head: A = throw new InvalidOperationException("head called on empty list")
 
-  def tail: MyList[A] = ???
+  def tail: MyList[A] = throw new InvalidOperationException("tail called on empty list")
 
-  def init: MyList[A] = ???
+  def init: MyList[A] = throw new InvalidOperationException("init called on empty list")
 
-  def last: A = ???
+  def last: A = throw new InvalidOperationException("last called on empty list")
 
   def safeHead: Option[A] = ???
 
   def safeTail: Option[MyList[A]] = ???
 
-  def isEmpty: Boolean = ???
+  def isEmpty: Boolean = true //TODO OK? 
 
-  def length: Int = ???
+  def length: Int = 0
 }
 
 object Tester {
