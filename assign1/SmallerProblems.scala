@@ -5,9 +5,7 @@ object Problem1 {
     def main( args:Array[String] ) = {
       println("problem 1")
 
-      //works, but I get an warning: Reason: main method must have exact signature (Array[String])Unit object Problem1
-      //args.toList.map(x => println(x.reverse))
-      //works
+      
       val list: List[String] = args.toList.map(_.reverse)
       for (elem <- list) {println(elem)}    
       
@@ -39,9 +37,9 @@ object Problem2 {
 
   def main( args:Array[String] ) = {
     // example tree
-    val tree = Node( (-1,-1), 
-      None,
-      Some(Node( (-1,-1),
+    val tree =              Node( (-1,-1), 
+                              None,
+                      Some(Node( (-1,-1),
                 Some(Node( (-1,-1), None, None )),
                 Some(Node( (-1,-1), Some(Node( (-1,-1), None, None )), None ))
       ))
@@ -51,6 +49,7 @@ object Problem2 {
     // classes are automatically given a toString method, so we don't
     // need to define our own.  Your solution must be general, in that
     // it can work with arbitrary trees.
+    print(tree)
     order( tree )
     println( tree )
 
@@ -58,10 +57,35 @@ object Problem2 {
     //
     // scala Problem2
     // Node((0,4),None,Some(Node((1,3),Some(Node((2,0),None,None)),Some(Node((3,2),Some(Node((4,1),None,None)),None)))))
+    // Node((0,0),None,Some(Node((1,0),Some(Node((2,0),None,None)),Some(Node((3,0),Some(Node((4,0),None,None)),None)))))
   }
 
+
   def order( node:Node ) {
-    
+    //Was only able to implement preOrder, not postOrder
+    def preOrder(node: Node, counter:Int){
+      node.ord = node.ord.copy(_1 = counter)
+
+      if ((node.left==None) && (node.right == None)){
+        return
+      } else {
+        val leftVal = counter + 1 
+        val leftOK = if (node.left isDefined) {
+          preOrder(node.left.get, leftVal) 
+          true
+          } else false
+        val rightValue = if (leftOK) (counter + 2) else (counter +1)
+        if (node.right isDefined) preOrder(node.right.get, rightValue)  else false
+      }
+      println(node.ord)            
+    }  
+      
+    //def postOrder(node: Node, counter:Int):Int = {
+        //Not implemented. 
+    //}  
+      
+
+    preOrder(node,0)
     // use a nested method inside this method as a helper function to
     // traverse the given tree and set each Node's 'ord' field to the
     // tuple '(preorder, postorder)', where 'preorder' is the Node's
@@ -129,3 +153,36 @@ object Problem3 {
     println(assignment3.toList) 
   }
 }
+
+
+
+
+    //match  ?? kanskje? 
+//    random.nextInt(3) match {
+//  case 0 => println("Saw 0")
+//  case 1 => println("Saw 1")
+//  case 2 => println("Saw 2")
+//  case _ => println("Don't know what I saw")
+//}
+
+  //   if (node.left != None) {
+  //       node.left.order
+  //     } else if (node.right != None) {
+  //       node.right.order
+  //     } else {
+  //       println("Default")
+  //     }
+
+  
+
+  // println(node.left)
+  // println(node.right)
+  // node match{
+  //   case node.left => println("None left")
+  //   case node.right => println("None Right")
+  //   case _ => println("Default")
+  // }
+
+  
+// if (node.left == None) {node.right.order} else if (node.right ==None) node.left.order
+
