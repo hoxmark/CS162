@@ -182,26 +182,40 @@ class Interpreter(val defs: Defs) {
     def nextState(): State = {
       // ??? // TODO: implement this
         
-  // case class State(t: Term, env: Env, ks: List[Kont]) {
-      (t, ks) match {
+      t match{
+        // case TermValue(tv) => (tv, ks) match {
+          
+          
+         
+         
+
+        // }
+
+        case TermExp(te) => (te, ks) match { 
           // Rule 1
-          case (TermValue(StrV(str)), _) => State(StrV(str),env,ks)
+          case (StringExp(str), _) => State(TermValue(StrV(str)),env,ks)
         
           // Rule 2
-          case (TermValue(BoolV(b)), _) => State(BoolV(b),env,ks)
+          case (BooleanExp(b), _) => State(TermValue(BoolV(b)),env,ks)
          
           // Rule 3
-          case (TermValue(IntV(b)), _) => State(IntV(b),env,ks)
+          case (IntExp(b), _) => State(TermValue(IntV(b)),env,ks)
          
           // Rule 4
-          case (unit, _) => State(UnitV,env,ks)
-         
+          case (UnitExp, _) => State(TermValue(UnitV),env,ks)
+          
           // Rule 5
-          case (unit, _) => State(UnitV,env,ks)
-         
-          // case (TermVal(t), _) => println("string")
-          case _ => println("FAIL")
-      }
+          case (VariableExp(x), premis) => State(TermValue(env(x)),env,ks)
+          
+          // Rule 6
+
+          
+
+        }
+
+
+      }  
+      
 
       // State(t, env, ks)
 
