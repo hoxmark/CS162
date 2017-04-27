@@ -60,6 +60,7 @@ object SimpleScalaParser extends StdTokenParsers with PackratParsers {
     ("false" ^^^ false)
 
   lazy val integer: P[Int] =
+    "-" ~> numericLit ^^ (i => -i.toInt) |
     numericLit ^^ (i => i.toInt)
 
   lazy val nat: P[Nat] = numericLit.flatMap(s => {
@@ -76,53 +77,53 @@ object SimpleScalaParser extends StdTokenParsers with PackratParsers {
   lazy val constructorName: P[ConstructorName] =
     upperCaseIdent ^^ ConstructorName.apply
 
-  lazy val multDiv: P[Binop] =
-    "*" ^^^ BinopTimes |
-    "/" ^^^ BinopDiv
-
   lazy val primExp: P[Exp] =
-    ("unit" ^^^ UnitExp |
-     string ^^ StringExp.apply |
-     boolean ^^ BooleanExp.apply |
-     integer ^^ IntExp.apply |
-     matchExp |
+    (matchExp |
      functionExp |
-     anonCallExp | // function exps handled in second pass
+     anonCallExp | // named calls handled in second pass
      ifExp |
      blockExp |
      accessExp |
      tupleExp |
      constructorExp |
+     "unit" ^^^ UnitExp |
+     string ^^ StringExp.apply |
+     boolean ^^ BooleanExp.apply |
+     integer ^^ IntExp.apply |
      variable ^^ VariableExp.apply |
      ("(" ~> exp <~ ")"))
 
-  lazy val multDivExp: P[Exp] =
-    (primExp ~ multDiv ~ primExp ^^ { case e1 ~ op ~ e2 => BinopExp(e1, op, e2) }) |
-    primExp
+  lazy val multDivExp: P[Exp] = {
+    binopExp(primExp, Map("*" -> BinopTimes,
+                          "/" -> BinopDiv))
+  }
 
-  lazy val plusMinus: P[Binop] =
-    "+" ^^^ BinopPlus |
-    "-" ^^^ BinopMinus
+  lazy val plusMinusExp: P[Exp] = {
+    binopExp(multDivExp, Map("+" -> BinopPlus,
+                             "-" -> BinopMinus))
+  }
 
-  lazy val plusMinusExp: P[Exp] =
-    (multDivExp ~ plusMinus ~ multDivExp ^^ { case e1 ~ op ~ e2 => BinopExp(e1, op, e2) }) |
-    multDivExp
+  lazy val lessLessThanExp: P[Exp] = {
+    binopExp(plusMinusExp, Map("<=" -> BinopLTE,
+                               "<" -> BinopLT))
+  }
 
-  lazy val lessLessThan: P[Binop] =
-     "<=" ^^^ BinopLTE |
-     "<" ^^^ BinopLT
+  lazy val andExp: P[Exp] = {
+    binopExp(lessLessThanExp, Map("&&" -> BinopAnd))
+  }
 
-  lazy val lessLessThanExp: P[Exp] =
-    (plusMinusExp ~ lessLessThan ~ plusMinusExp ^^ { case e1 ~ op ~ e2 => BinopExp(e1, op, e2) }) |
-    plusMinusExp
+  lazy val orExp: P[Exp] = {
+    binopExp(andExp, Map("||" -> BinopOr))
+  }
 
-  lazy val andExp: P[Exp] =
-    (lessLessThanExp ~ "&&" ~ lessLessThanExp ^^ { case e1 ~ _ ~ e2 => BinopExp(e1, BinopAnd, e2) }) |
-    lessLessThanExp
+  def binopExp(base: => P[Exp], ops: Map[String, Binop]): P[Exp] = {
+    binop(base, ops.mapValues(bop => (x: Exp, y: Exp) => BinopExp(x, bop, y)))
+  }
 
-  lazy val orExp: P[Exp] =
-    (andExp ~ "||" ~ andExp ^^ { case e1 ~ _ ~ e2 => BinopExp(e1, BinopOr, e2) }) |
-    andExp
+  def binop[A](base: => P[A], ops: Map[String, (A, A) => A]): P[A] = {
+    val opsF = ops.toSeq.map( { case (stringOp, f) => stringOp ^^^ f } ).reduceLeft(_ | _)
+    chainl1(base, opsF)
+  }
 
   lazy val functionExp: P[FunctionExp] =
     variable ~ ("=>" ~> exp) ^^ { case x ~ e => FunctionExp(x, e) }
@@ -343,7 +344,7 @@ object SimpleScalaParser extends StdTokenParsers with PackratParsers {
     boolean ^^ TestBoolean.apply
 
   lazy val testInt: P[TestInt] =
-    numericLit ^^ (i => TestInt(i.toInt))
+    integer ^^ TestInt.apply
 
   lazy val testUnit: P[TestUnit.type] =
     "unit" ^^^ TestUnit
