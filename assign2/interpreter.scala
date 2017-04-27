@@ -205,8 +205,15 @@ class Interpreter(val defs: Defs) {
             State(TermExp(eP), (envP + (xP -> v)), RestoreK(env) :: ks)
           }
           //rule 14 
+          case (v, NamedFunK(fn)::ks) => {
+            val (x, e) = defs(fn)
+            State(TermExp(e), (Map[Variable, Value]() + (x -> v)), RestoreK(env)::ks)
+          }
           
-
+          //rule 15
+          case (v, RestoreK(envP)::k2) => {
+            State(TermValue(v), envP, k2)
+          }
         }
 
         case TermExp(te) => (te, ks) match { 
@@ -238,12 +245,14 @@ class Interpreter(val defs: Defs) {
           // TODO ADD PREMIST TO RULE 13 type Defs = Map[FunctionName, (Variable, Exp)]          
           case (NamedCallExp(fn, e), _) => State(TermExp(e), env, NamedFunK(fn)::ks) 
 
-          //rule 14
+          //Rule 16
+          case (IfExp(e1, e2, e3), _ ) => State(TermExp(e1), env, IfK(e2, e3)::ks)
           
+          //rule 17
+          case (BlockExp(Val(x,e1):: vals, e2),_) => State(TermExp(e1), env, BlockK(x, vals,e2)::ks)
 
-
-          // rule 17
-          // case TermExp(BlockExp(Val(x,e1):: vals, e2))=> State
+          case ( (), _)
+          
         }
 
 
