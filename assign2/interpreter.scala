@@ -142,16 +142,16 @@ class Interpreter(val defs: Defs) {
   }
         
   case class State(t: Term, env: Env, ks: List[Kont]) {
-    def runToValue(): Value = {
-      var state = this
-      var value = state.haltedValue
-      while (value.isEmpty) {
-        state = state.nextState
-        value = state.haltedValue
+      def runToValue(): Value = {
+        var state = this
+        var value = state.haltedValue
+        while (value.isEmpty) {
+          state = state.nextState
+          value = state.haltedValue
+        }
+        assert(value.isDefined)
+        value.get
       }
-      assert(value.isDefined)
-      value.get
-    }
 
     def haltedValue(): Option[Value] = {
       (t, ks) match {
@@ -180,8 +180,58 @@ class Interpreter(val defs: Defs) {
     // All the helper functions have been provided for you; you
     // need only implement the table in `nextState` below.
     def nextState(): State = {
-      ??? // TODO: implement this
+      // ??? // TODO: implement this
+        
+  // case class State(t: Term, env: Env, ks: List[Kont]) {
+      (t, ks) match {
+          // Rule 1
+          case (TermValue(StrV(str)), _) => State(StrV(str),env,ks)
+        
+          // Rule 2
+          case (TermValue(BoolV(b)), _) => State(BoolV(b),env,ks)
+         
+          // Rule 3
+          case (TermValue(IntV(b)), _) => State(IntV(b),env,ks)
+         
+          // Rule 4
+          case (unit, _) => State(UnitV,env,ks)
+         
+          // Rule 5
+          case (unit, _) => State(UnitV,env,ks)
+         
+          // case (TermVal(t), _) => println("string")
+          case _ => println("FAIL")
+      }
+
+      // State(t, env, ks)
+
     } // nextState
   } // State
 } // Interpreter
 
+// sealed trait Value
+// case class StrV(s: String) extends Value
+// case class BoolV(b: Boolean) extends Value
+// case class IntV(i: Int) extends Value
+// case object UnitV extends Value
+// case class ClosureV(x: Variable, e: Exp, env: Env) extends Value
+// case class ConstructorV(cn: ConstructorName, v: Value) extends Value
+// case class TupleV(vs: List[Value]) extends Value
+
+// sealed trait Kont
+// case class BinopLeftK(binop: Binop, e: Exp) extends Kont
+// case class BinopRightK(v: Value, binop: Binop) extends Kont
+// case class RestoreK(env: Env) extends Kont
+// case class AnonFunLeftK(e: Exp) extends Kont
+// case class AnonFunRightK(x: Variable, e: Exp, env: Env) extends Kont
+// case class NamedFunK(fn: FunctionName) extends Kont
+// case class IfK(e1: Exp, e2: Exp) extends Kont
+// case class BlockK(x: Variable, vals: List[Val], e: Exp) extends Kont
+// case class TupleK(es: List[Exp], vs: List[Value]) extends Kont
+// case class AccessK(n: Nat) extends Kont
+// case class ConstructorK(cn: ConstructorName) extends Kont
+// case class MatchK(cases: List[Case]) extends Kont
+
+// sealed trait Term
+// case class TermExp(e: Exp) extends Term
+// case class TermValue(v: Value) extends Term
