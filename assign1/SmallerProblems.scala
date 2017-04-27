@@ -79,7 +79,8 @@ object Problem2 {
       }
       println(node.ord)            
     }  
-      
+    
+    //Threading thru state 
     //def postOrder(node: Node, counter:Int):Int = {
         //Not implemented. 
     //}  
@@ -105,6 +106,11 @@ object Problem2 {
     // data dependency between recursive calls, whereas with functional
     // purity we must make this data dependency explicit.
   }
+
+  //Alternativ way to solve this. 
+
+
+
 }
 
 object Problem3 {
@@ -146,11 +152,32 @@ object Problem3 {
     
     //x is baseline List 
     val assignment2 = list.foldLeft(List[String]())((x:List[String],y) => if (x.contains(y)) x else y::x )
-    println(assignment2)
+    println(assignment2.reverse)
 
     //x is baseline Map() 
     val assignment3 = list.foldLeft(Map[String, Int]())((x,y) => if (x.contains(y)) (x + (y->(x(y)+1))) else (x + (y->1)) )
-    println(assignment3.toList) 
+    println(assignment3.toList.reverse) 
+
+    //Alternative solution to prog 3
+
+    // def runLengthEncoding(args: List[String]):List[(String, Integer)] = {
+    //   args.foldLeft(List[(String, Integer)]())(res,cur) => {
+    //     accum match {
+    //       case(`cur`,n) :: rest => {
+    //         (cur,n+1) :: rest
+    //       }//FOo with som count n,
+    //       case _ => {
+    //         (cur,1):: accum
+    //       }
+    //       // case pair :: rest => { // pair is head and rest is tail.  
+    //       //   (cur,1):: pair :: rest
+    //       // }
+    //       // case Nil => {
+    //       //   (cur, 1) :: Nil
+    //       }
+    //     }
+    //   }   
+    }
   }
 }
 
