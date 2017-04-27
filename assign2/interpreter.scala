@@ -221,8 +221,44 @@ class Interpreter(val defs: Defs) {
           //Rule 23
           case (BoolV(false), IfK(e1,e2)::k2) => State(TermExp(e2), env, k2)
 
+          // Rule 24
+          case (v, BlockK(x1,  Val(x2,e1)::vals, e2)::k2) => {
+            State(TermExp(e1), (env + (x1->v)), BlockK(x2, vals, e2):: RestoreK(env):: k2)
+          } 
 
+          // Rule 25  TODO: SWAP OUT LIST WITH SOMETHING
+          case (v, BlockK(x, List() , e)::k2) => State(TermExp(e), (env+(x->v)),RestoreK(env)::k2)
 
+          // Rule 26
+          case (v1, (TupleK(e1 :: e2, v2)::k2)) => State(TermExp(e1), env, TupleK(e2, v1 :: v2)::k2)
+
+          //Rule 27 TODO MAKE es EMPLTY? 
+          case (v1, (TupleK(List(), v2)::k2)) => {
+            val v3Temp = (v1 :: v2)
+            val v3 = v3Temp.reverse
+            State(TermValue(TupleV(v3)), env, k2)
+          }
+
+          //rule 28
+          case (TupleV(v1), AccessK(n)::k2) => {
+            val v2 = tupleAccess(v1, n)
+            State(TermValue(v2), env, k2)
+          }
+
+          //rule 29
+          case (v, ConstructorK(cn)::k2) => State(TermValue(ConstructorV(cn, v)), env, k2)
+
+          //Rule 30 
+          case (ConstructorV(cn, v), MatchK(cas)::k2) => {
+            val (x, e) = constructorCaseLookup(cn, cas)
+            State(TermExp(e), (env + (x->v)), RestoreK(env)::k2)
+          }
+
+          //rule 31
+          case (TupleV(v1), matchK(cas)::k2)=> {
+            val (envP, e) = tupleCaseLookup(v1, env, cas)
+            State(TermExp(e), envP, RestoreK(env)::k2)
+          } 
 
         }
 
@@ -262,7 +298,7 @@ class Interpreter(val defs: Defs) {
           case (BlockExp(Val(x,e1):: vals, e2),_) => State(TermExp(e1), env, BlockK(x, vals,e2)::ks)
 
           // rule 18         
-          // case ( (), _)
+          case (TupleExp(e1 :: e2),_) => State(TermExp(e1), env, TupleK(e2,  List() )::ks)
 
           //Tule 19
           case (AccessExp(e, n),_) => State(TermExp(e), env, AccessK(n)::ks)
