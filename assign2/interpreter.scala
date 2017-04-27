@@ -214,6 +214,16 @@ class Interpreter(val defs: Defs) {
           case (v, RestoreK(envP)::k2) => {
             State(TermValue(v), envP, k2)
           }
+
+          //Rule 22
+          case (BoolV(true), IfK(e1,e2)::k2) => State(TermExp(e1), env, k2)
+           
+          //Rule 23
+          case (BoolV(false), IfK(e1,e2)::k2) => State(TermExp(e2), env, k2)
+
+
+
+
         }
 
         case TermExp(te) => (te, ks) match { 
@@ -251,8 +261,20 @@ class Interpreter(val defs: Defs) {
           //rule 17
           case (BlockExp(Val(x,e1):: vals, e2),_) => State(TermExp(e1), env, BlockK(x, vals,e2)::ks)
 
-          case ( (), _)
+          // rule 18         
+          // case ( (), _)
+
+          //Tule 19
+          case (AccessExp(e, n),_) => State(TermExp(e), env, AccessK(n)::ks)
+
+          //Tule 20
+          case (ConstructorExp(cn, e), _) => State(TermExp(e), env, ConstructorK(cn)::ks)
+
+          //rule 21
+          case (MatchExp(e, cases), _) => State(TermExp(e), env, MatchK(cases)::ks)
+
           
+
         }
 
 
