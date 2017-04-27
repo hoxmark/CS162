@@ -180,16 +180,34 @@ class Interpreter(val defs: Defs) {
     // All the helper functions have been provided for you; you
     // need only implement the table in `nextState` below.
     def nextState(): State = {
-      // ??? // TODO: implement this
-        
-      t match{
-        // case TermValue(tv) => (tv, ks) match {
-          
-          
-         
-         
 
-        // }
+      t match{
+        case TermValue(tv) => (tv, ks) match {
+          //rule 7
+          case (v, BinopLeftK(op, e)::ks) => {
+            println("Rule 7")
+            State( TermExp(e) ,env,BinopRightK(v, op)::ks)
+          }
+          
+          //Rule 8 
+          case (v2, BinopRightK(v1, op)::ks) => {
+            println("Rule 8")
+            State(TermValue(evalOp(v1, op, v2)) ,env, ks)
+          }
+          //Rule 11
+          case (ClosureV(xP,eP,envP), AnonFunLeftK(e)::ks) => {
+            println("Rule 11")
+            State(TermExp(e) ,env, AnonFunRightK(xP, eP, envP) :: ks)
+          }
+          // Rule 12
+          case (v, AnonFunRightK(xP, eP, envP)::ks) => {
+            println("Rule 12")
+            State(TermExp(eP), (envP + (xP -> v)), RestoreK(env) :: ks)
+          }
+          //rule 14 
+          
+
+        }
 
         case TermExp(te) => (te, ks) match { 
           // Rule 1
@@ -204,13 +222,28 @@ class Interpreter(val defs: Defs) {
           // Rule 4
           case (UnitExp, _) => State(TermValue(UnitV),env,ks)
           
-          // Rule 5
-          case (VariableExp(x), premis) => State(TermValue(env(x)),env,ks)
+          // Rule 5 Need to handle premis
+          case (VariableExp(x), premis) if env.contains(x) => State(TermValue(env(x)),env,ks)
           
-          // Rule 6
+          // Rule 6 Term or TermExp
+          case (BinopExp(e1, op, e2), _) =>  State(TermExp(e1),env,BinopLeftK(op, e2)::ks)
+          // 
+          // Rule 9 
+          case (FunctionExp(x, e), _) => State(TermValue(ClosureV(x, e, env)), env, ks)
+          
+          //rule 10
+          case (AnonCallExp(e1, e2) ,_) => State(TermExp(e1),env, AnonFunLeftK(e2)::ks)
+          
+          // Rule 13 
+          // TODO ADD PREMIST TO RULE 13 type Defs = Map[FunctionName, (Variable, Exp)]          
+          case (NamedCallExp(fn, e), _) => State(TermExp(e), env, NamedFunK(fn)::ks) 
 
+          //rule 14
           
 
+
+          // rule 17
+          // case TermExp(BlockExp(Val(x,e1):: vals, e2))=> State
         }
 
 
