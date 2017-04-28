@@ -231,7 +231,7 @@ def foldLeft(list) = accum => fn =>
   else
   foldLeft(tail(list))(fn(accum)(head(list)))(fn)
 
-//Implementet this only using patternmatching, before i figured out I could ut if
+//Implementet this only using patternmatching, before i figured out I could ut if. 
 def append(l1) = l2 => 
   l1 match {      
       case Cons(cell) =>
@@ -285,13 +285,9 @@ def take(list) = i =>
       }
       case Nil(x) => Nil(unit)
   }
-  
 
 def drop(list) = i => 
   if (length(list) < 1 ) Nil(unit)
   else 
   if (i < 1) Cons((head(list), drop(tail(list))(i-1)))
   else drop(tail(list))(i-1) 
-
-
-

@@ -185,23 +185,19 @@ class Interpreter(val defs: Defs) {
         case TermValue(tv) => (tv, ks) match {
           //rule 7
           case (v, BinopLeftK(op, e)::ks) => {
-            println("Rule 7")
             State( TermExp(e) ,env,BinopRightK(v, op)::ks)
           }
           
           //Rule 8 
           case (v2, BinopRightK(v1, op)::ks) => {
-            println("Rule 8")
             State(TermValue(evalOp(v1, op, v2)) ,env, ks)
           }
           //Rule 11
           case (ClosureV(xP,eP,envP), AnonFunLeftK(e)::ks) => {
-            println("Rule 11")
             State(TermExp(e) ,env, AnonFunRightK(xP, eP, envP) :: ks)
           }
           // Rule 12
           case (v, AnonFunRightK(xP, eP, envP)::ks) => {
-            println("Rule 12")
             State(TermExp(eP), (envP + (xP -> v)), RestoreK(env) :: ks)
           }
           //rule 14 
@@ -226,13 +222,13 @@ class Interpreter(val defs: Defs) {
             State(TermExp(e1), (env + (x1->v)), BlockK(x2, vals, e2):: RestoreK(env):: k2)
           } 
 
-          // Rule 25  TODO: SWAP OUT LIST WITH SOMETHING
+          // Rule 25  
           case (v, BlockK(x, List() , e)::k2) => State(TermExp(e), (env+(x->v)),RestoreK(env)::k2)
 
           // Rule 26
           case (v1, (TupleK(e1 :: e2, v2)::k2)) => State(TermExp(e1), env, TupleK(e2, v1 :: v2)::k2)
 
-          //Rule 27 TODO MAKE es EMPLTY? 
+          //Rule 27 
           case (v1, (TupleK(List(), v2)::k2)) => {
             val v3Temp = (v1 :: v2)
             val v3 = v3Temp.reverse
@@ -255,10 +251,16 @@ class Interpreter(val defs: Defs) {
           }
 
           //rule 31
-          case (TupleV(v1), matchK(cas)::k2)=> {
+          case (TupleV(v1), MatchK(cas)::k2) => {
             val (envP, e) = tupleCaseLookup(v1, env, cas)
             State(TermExp(e), envP, RestoreK(env)::k2)
           } 
+
+          //Rule 32
+          case (v, List()) => State(TermValue(v),  env, ks)
+          
+          //If none match throw StuckException
+          case _ =>  throw new StuckException()          
 
         }
 
@@ -289,7 +291,7 @@ class Interpreter(val defs: Defs) {
           
           // Rule 13 
           // TODO ADD PREMIST TO RULE 13 type Defs = Map[FunctionName, (Variable, Exp)]          
-          case (NamedCallExp(fn, e), _) => State(TermExp(e), env, NamedFunK(fn)::ks) 
+          case (NamedCallExp(fn, e), _) if defs.contains(fn) => State(TermExp(e), env, NamedFunK(fn)::ks) 
 
           //Rule 16
           case (IfExp(e1, e2, e3), _ ) => State(TermExp(e1), env, IfK(e2, e3)::ks)
@@ -309,16 +311,14 @@ class Interpreter(val defs: Defs) {
           //rule 21
           case (MatchExp(e, cases), _) => State(TermExp(e), env, MatchK(cases)::ks)
 
+          //If none match throw StuckException
+          case _ =>  throw new StuckException()
           
-
         }
-
-
-      }  
-      
-
-      // State(t, env, ks)
-
+        
+        //If none match throw StuckException
+        case _ =>  throw new StuckException()
+      }      
     } // nextState
   } // State
 } // Interpreter
