@@ -181,6 +181,7 @@ class Interpreter(val defs: Defs) {
     // need only implement the table in `nextState` below.
     def nextState(): State = {
 
+    
       t match{
         case TermValue(tv) => (tv, ks) match {
           //rule 7

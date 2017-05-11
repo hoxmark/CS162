@@ -1,0 +1,180 @@
+// Notes from class: 
+
+t1->t2
+-----
+t1 => t2 //Correct 
+
+// To find the return type, you look at the body of the function. 
+
+(x:Int) => x+1
+------
+Int => int 
+
+
+------------
+
+e1 match{
+    case functionExp()=> ....
+}
+
+----
+fn(8)(7) <- this code 
+
+AnonCall(
+    AnonCall(
+        variable("x")
+        IntExp(8)        
+    )
+    IntExp(7)
+)
+
+"foo"(8) //does not make any sence
+
+// The code we write si suppose to be very recurive .
+
+typeof(e1, gamma) match {
+    case....
+}
+
+
+//Gamme + e2  t1   // yous hould think type of.  ITs jreally saying, do a recursive call. of what? of the rules we are ....
+
+// har fortsatt noe slikt: 
+e1 match { 
+    case anoncall() =>
+    case functionExp()=>
+    case ifExp()=>...
+    ...
+
+}
+
+
+
+// -------------
+
+eventually there wil be a functionExp(). 
+
+
+
+
+-----
+{val fn = 
+(x:int) => 
+(y:int) => 
+x+y
+    fn(8)(7)
+}
+
+
+
+------
+[fn |-> Int 0> int 9 => Int] |- fn
+
+
+----
+
+// Plus operator works for String concatenating and for operator addition. 
+1+2 : Int
+
+"f" + "o" : String
+
+e1 + e1  // need to look at both of there types. If they ar eboth Int then int if both String then OK.
+
+
+
+-------
+cant do 
+case (typedef(evt))
+
+-------
+
+TODO // Nå kan man matche på en TUPPEL AV Typeofs. .
+(Typeof (e1, Gam) 
+Type(e2, Gam)) match {
+ case 
+
+}
+
+
+.......... // Not going to rate effisiency 
+
+
+Maybe both checkers are both ill typed.? tests 
+
+1+"foo"
+and
+"foo"+1
+
+..........
+Having issues with the tests, then check the 
+
+..
+Hint: 
+Ikke lag alle testenemed engang. Når man trower en ill test så kan man skrive den testen som skal plukke det opp
+
+....
+
+BLOCK: 
+// if you have a list, and you need ot go thru it recurivly: 
+
+
+BlockGamma( vals: List[Val], gamma: TypeEnv): TypeEnv = { 
+    vals match {
+        case nil => gamme 
+        case Val(x,e):: vals=>{
+            val tau = typeof(e, gamme)
+            BlockGamma(vals, gamma + (x-> tau))
+        }
+    }
+}
+
+
+{val x= 7 //(x-> Int])
+
+}
+
+
+-
+
+
+Tupletypes
+
+
+
+† = tulTypes(e, gam)
+-------------------
+gam 0 (e): (†)
+
+
+Helper
+(1,2)
+(int, int)
+(1,3,"foo")
+(int int, string)
+
+
+
+
+
+
+
+
+
+(tuple arrow) <- dette er en tupletype. (just return a tupleType)
+Is a tuple of types. 
+
+
+(t1,t2) match { 
+    case ( intType, intType) => 
+    case _ => Throw new Illtyped()
+}
+ 
+
+t1 == t2 // scala diff than java. Object equality 
+
+ref equality is t2 eqc t2
+
+ 
+
+ legge til x i now. 
+  

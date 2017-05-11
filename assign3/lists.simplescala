@@ -61,16 +61,17 @@ def length(list: IntList): Int =
     case Nil(x) => 0
   }
 
+
 def head(list: IntList):Int =
   list match {
     case Cons(cell) => cell._1
-    case Nil(x) => -1// intentionally get stuck
+    case Nil(x) => -1 // should throw an error 
   }
 
 def tail(list:IntList):IntList =
   list match {
     case Cons(cell) => cell._2
-    case Nil(x) => Nil(unit) // intentionally get stuck
+    case Nil(x) => Nil(unit) // should throw an error 
   }
 
   def init(list:IntList): IntList =
@@ -83,7 +84,7 @@ def tail(list:IntList):IntList =
             case Nil(x) => Nil(x)
           }
       }
-    case Nil(x) => Nil(unit) // intentionally get stuck
+    case Nil(x) => Nil(unit) // should throw an error 
   }
 
   def last(list:IntList):Int =
@@ -96,7 +97,7 @@ def tail(list:IntList):IntList =
             case Nil(x) => head
           }
       }
-    case Nil(x) => -1 // intentionally get stuck
+    case Nil(x) => -1 // should throw an error 
   }
 
 // -------BEGIN CODE YOU MUST IMPLEMENT-------
@@ -193,7 +194,7 @@ def drop(list: IntList): Int => IntList =
   (i: Int) => 
   if (isEmpty(list)) Nil(unit) 
   else 
-  if (i < 1) Cons((list), drop(tail(list))(i-1)))
+  if (i < 1) Cons((head(list), drop(tail(list))(i-1)))
   else drop(tail(list))(i-1)  
 
 // algebraic IntList = Cons((Int, IntList)) | Nil(Unit)

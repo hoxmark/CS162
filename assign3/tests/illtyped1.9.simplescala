@@ -1,0 +1,6 @@
+def id(x: Int): String = x
+id(10)
+
+
+;;;
+ILLTYPED

@@ -1,0 +1,54 @@
+2D picture Map[(x,y), Pixel]
+
+writePixel(p: pixel, x:Int, y: Int)
+
+//Map is made, map is in memory. 
+
+(x,y) => bool
+
+
+--------
+type image[A] = (x,y) => A
+
+
+
+def blah[A] (a:A) :A = ???
+
+
+def bazA[A,B](a:A, f: A=>B):B = f(a)
+
+def map[A,B](list:List[A] f:A=>B):list[B]= 
+
+def foo[A,B](b:B):A => B = 
+    (a:A) => B
+
+
+
+
+----
+
+Point:(x,y)
+Img[A]
+point => A
+
+
+def baz[A](a:A): Point => A   
+        (p: Point)=> a
+
+
+baz(whitePixel) // now all is white. 
+
+
+
+def foo[A,B,C,D]( bf: A=>B,  //boolean
+                if: A=C,    //pixel 
+                ff: (B,C)=>D): A=>D = {  //d-pixel
+                        (a:A) => ff(bf(A), if(A))
+                        
+
+
+                }
+
+
+
+masking, 
