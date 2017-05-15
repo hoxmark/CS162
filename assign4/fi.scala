@@ -435,9 +435,19 @@ object Images {
   // -Takes an image parameterized by type B, and
   // -Returns an image parameterized by type C
   // !!FILL ME IN
-
+  // mine
   def lift2[A,B,C](func: (A,B)=>C): Img[A] => Img[B] => Img[C] = (aa:Img[A]) => (bb:Img[B]) => (pt) => func(aa(pt),bb(pt)) 
+ 
+  // Kyles from lesson
+  // (Int, Int) => Int
+  // Int => (Int => Int)
+  // Int => Int => Int
 
+  // def chr2(x:Int) = (y:Int) > x+y
+  
+  // def lift2[A, B, C](f:(A,B) => C)(imgA: Point=> A)(imgB: Point=>B): Point => C = {
+  //   (pt:Point) => f(imgA(pt), imgB(pt))
+  // }
 
   // Define a curried generic method named 'lift3' that:
   // -Takes a function from three values of types A, B, and C to a value of type D, and
@@ -474,7 +484,11 @@ object Images {
   // Define a function 'overlayImgClr' that uses `overlayClr` (defined
   // above) and one of the above lifting methods to overlay one colour
   // image on top of another
-  // !!FILL ME IN
+  // // !!FILL ME IN
+  // val overlayImgClr = (i1: ImgClr) =>
+  //                     (i2: ImgClr) => 
+  //                      lift2(overlayClr)(i1)(i2)
+
   val overlayImgClr = lift2(overlayClr)
 
   // Define a function 'selectImgClr' that uses one of the above
@@ -525,9 +539,14 @@ object SpatialTransforms {
   //  Y coordinate.
   // !!FILL ME IN
 
-
-  def translatePr(v:Vector)
-
+//   // a vector
+// case class Vector(x: Double, y: Double) {
+//   def neg = Vector(-x, -y)
+//   def inverse = Vector(1/x, 1/y)
+// }
+  // translatePt(Vector(3, 3))(Point(2, 2)), Point(5.0, 5.0)),
+  def translatePt(v:Vector):TransformPt = (p) => Point(p.x + v.x, p.y + v.y)
+  // def translatePr(v:Vector):TransformPt = (p) => (x+v.x,y+v.y)
 
   // Define a method named 'scalePt' that:
   // -Takes a Vector, and
@@ -537,7 +556,7 @@ object SpatialTransforms {
   //  coordinate and the vector's Y component by the point's Y
   //  coordinate.
   // !!FILL ME IN
-
+  def scalePt(v: Vector): TransformPt = (p) => Point(p.x*v.x, p.y*v.y)
     
   // Define a method named 'rotatePt' that:
   // -Takes a Double specifying an angle, and
@@ -547,6 +566,7 @@ object SpatialTransforms {
   //  (x * cos(theta) - y * sin(theta),
   //   y * cos(theta) + x * sin(theta))
   // !!FILL ME IN
+  def rotatePt(theta: Double): TransformPt = (p) => Point(p.x * cos(theta) - p.y * sin(theta), p.y * cos(theta) + p.x * sin(theta))
 
 
   // Define a method named 'swirlPt' that:
@@ -557,13 +577,25 @@ object SpatialTransforms {
   //  where |pt| is the distance from pt to the origin.  You may find
   //  the dist and rotatePt methods useful here.
   // !!FILL ME IN
-
+  def swirlPt(theta: Double): TransformPt = (p) => Point(p.x*dist(p) * (2 * PI/theta), p.y * dist(p) * (2 * PI/theta)) 
 
   // Define a method named 'polarXf' that:
   // -Takes a TransformPlr, and
   // -Returns a TransformPt.  You may find some other methods
   //  helpful here.
   // !!FILL ME IN
+  // type TransformPt  = Point => Point
+  // type TransformPlr = Polar => Polar
+
+  //   // transform cartesian to polar coordinates
+  // def pt2plr(pt: Point): Polar =
+  //   Polar(dist(pt), atan2(pt.y, pt.x))
+
+  // // transform polar to cartesian coordinates
+  // def plr2pt(plr: Polar): Point =
+  //   Point(plr.rho * cos(plr.theta), plr.rho * sin(plr.theta))
+
+  def polarXf(trsPlr: TransformPlr): TransformPt = (pt) => plr2pt(trsPlr(pt2plr(pt)))
 
 
   // NOTE: the above transformations work somewhat
@@ -583,7 +615,7 @@ object SpatialTransforms {
   // -Returns a Filter that translates an image with translatePt using
   //  the negation of the provided vector
   // !!FILL ME IN
-
+  def translate(v:Vector) 
 
   // Define a generic method named 'scale' that:
   // -Takes a Vector, and
