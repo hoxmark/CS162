@@ -1,0 +1,15 @@
+Notes from Discussion
+
+COmbonators: 
+dup: x-> xx
+dup 3 -> 33
+
+add 1 2 3 -> 3 3 
+
+Eats up the next in a stack. Does not need () 
+
+blur: 
+Takes an image, return an immage. 
+
+
+Image => value => image 

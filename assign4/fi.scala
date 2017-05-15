@@ -386,20 +386,48 @@ object Images {
   //
   // ...we could use lift2 to create a function taking
   // an ImgMask and an ImgGray as arguments and returning an ImgClr.
-
+  
 
   // Define a generic method named 'lift0' that:
   // -Takes a value of some type
   // -Returns an image containing only that value
+  
+  
+  // will be called like this: lift0(1)(p)
   // !!FILL ME IN
+  // Example of curring from ass1
+  // val add2 = (x: Int) => (y: Int) => x + y
+
+  // assert(add2(1)(2) == 3)
+
+  def lift0[N](n:N):Img[N] = ( (p:Point) => n)
+  // def lift0[N](n:N):(Img[N]) => ( p => n)
+  // def lift0[N] = (n:N) => ((p:Point) => n)
+
+   
 
 
   // Define a curried generic method named 'lift1' that:
   // -Takes a function from a value of type A to a value of type B, and
   // -Takes a image parameterized by type A
   // -Returns an image parameterized by type B
-  // !!FILL ME IN
+  // // !!FILL ME IN
+  //Remeber () around the aa:Img[A]
+  def lift1[A,B]( func: A => B): Img[A] => Img[B] = (aa:Img[A]) => (pt) => func(aa(pt))
 
+  // def lift1[A,B] = (func: (A=>B)) => {
+  //   a: Img[A] => {
+  //     (pt) => func(a) 
+  //   }
+  // } 
+
+
+  
+  // def lift1[A,B] = (func: (A=>B)) => (p) => a:Img[A] => (pt) => func(a) 
+  // def lift1[A, B](func: A => B) => ((p) => a: A) => ((pt) => func(a))
+  
+  // def bazA[A,B](a:A, f: A=>B):B = f(a)
+   
 
   // Define a curried generic method named 'lift2' that:
   // -Takes a function from two values of types A and B to a value of type C, and
@@ -407,6 +435,8 @@ object Images {
   // -Takes an image parameterized by type B, and
   // -Returns an image parameterized by type C
   // !!FILL ME IN
+
+  def lift2[A,B,C](func: (A,B)=>C): Img[A] => Img[B] => Img[C] = (aa:Img[A]) => (bb:Img[B]) => (pt) => func(aa(pt),bb(pt)) 
 
 
   // Define a curried generic method named 'lift3' that:
@@ -418,17 +448,34 @@ object Images {
   // !!FILL ME IN
 
 
+
+  def lift3[A,B,C,D](func: (A,B,C)=>D): Img[A] => Img[B] => Img[C] => Img[D] = (aa:Img[A]) => (bb:Img[B]) => (cc:Img[C]) => (pt) => func(aa(pt),bb(pt), cc(pt)) 
+
+
   // Define a function 'lerpImgClr' that uses `lerpClr` (defined above)
   // and one of the above lifting methods to interpolate between two
   // colour images.
   // !!FILL ME IN
+  // def lerpClr(w: Value, c1: Colour, c2: Colour): Colour = {
+  //   def h(v1: Value, v2: Value) = (w*v1) + ((1-w)*v2)
+  //   Colour(h(c1.R,c2.R), h(c1.G,c2.G), h(c1.B,c2.B), h(c1.alpha,c2.alpha))
+  // }
 
+  val lerpImgClr = lift3(lerpClr)
+  
+  // lerpImgClr(0,5 red, blue);
+  // def lerpImgClr[A, B](v:Valuem, c1:Colour, c2:Colour) = (aa:Img[A]) => lift1(aa, Img[lerpClr(v, c1, c2)])
+  //lerpClr(w: Value, c1: Colour, c2: Colour):
+  //lerpClr(0.5, black, red)
+  //lift1((i: Int) => i.toString)(pt => 1)(p)  
+  // val p = Point(1, 1)
+  // def lerpImgClr[A, B](v:Value, c1:Colour, c2: Colour):ImgClr => ImgClr =  lift1(Img[A] => (pt) lerpClr(v,c1,c2)])
 
   // Define a function 'overlayImgClr' that uses `overlayClr` (defined
   // above) and one of the above lifting methods to overlay one colour
   // image on top of another
   // !!FILL ME IN
-
+  val overlayImgClr = lift2(overlayClr)
 
   // Define a function 'selectImgClr' that uses one of the above
   // lifting methods on an anonymous function that takes a Boolean and
@@ -439,6 +486,8 @@ object Images {
   // argument based on the boolean value at that position given by the
   // ImgMask argument.
   // !!FILL ME IN
+  // ImgMask, ImgClr, ImgClr => ImgClr
+  val selectImgClr = lift3((b:Boolean, c1:Colour, c2:Colour) => if(b) (c1) else (c2))
 
 
   // Define a function 'msk2clr' that uses one of the lifting methods
@@ -446,13 +495,15 @@ object Images {
   // ImgMask as argument and returns an ImgClr where a true value in
   // the ImgMask is black in the ImgClr and a false value is white.
   // !!FILL ME IN
-
+  val msk2clr = lift1((b:Boolean)=> if(b) Colour(1,1,1,1) else Colour(0,0,0,1))
 
   // Define a function 'gray2clr' that uses one of the lifting methods
   // on an anonymous function; thus yielding a function that takes a
   // ImgGray as argument and returns an ImgClr where a Value in the
   // ImgGray is turned into a corresponding Colour in the ImgClr.
   // !!FILL ME IN
+
+  val gray2clr = lift1((v:Value)=> Colour(1,v,v,v))
 }
 
 // the functions dealing with spatial transforms on images. we provide
@@ -473,6 +524,9 @@ object SpatialTransforms {
   //  X coordinate and the vector's Y component to the point's
   //  Y coordinate.
   // !!FILL ME IN
+
+
+  def translatePr(v:Vector)
 
 
   // Define a method named 'scalePt' that:

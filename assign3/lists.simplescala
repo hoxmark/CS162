@@ -61,17 +61,16 @@ def length(list: IntList): Int =
     case Nil(x) => 0
   }
 
-
 def head(list: IntList):Int =
   list match {
     case Cons(cell) => cell._1
-    case Nil(x) => -1 // should throw an error 
+    case Nil(x) => 0  
   }
 
 def tail(list:IntList):IntList =
   list match {
     case Cons(cell) => cell._2
-    case Nil(x) => Nil(unit) // should throw an error 
+    case Nil(x) => Nil(unit)  
   }
 
   def init(list:IntList): IntList =
@@ -84,7 +83,7 @@ def tail(list:IntList):IntList =
             case Nil(x) => Nil(x)
           }
       }
-    case Nil(x) => Nil(unit) // should throw an error 
+    case Nil(x) => Nil(unit) 
   }
 
   def last(list:IntList):Int =
@@ -97,7 +96,7 @@ def tail(list:IntList):IntList =
             case Nil(x) => head
           }
       }
-    case Nil(x) => -1 // should throw an error 
+    case Nil(x) => 0 
   }
 
 // -------BEGIN CODE YOU MUST IMPLEMENT-------

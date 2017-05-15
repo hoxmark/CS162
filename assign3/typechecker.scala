@@ -95,8 +95,11 @@ class Typechecker(val fdefs: NamedFunctionDefs,
       // If
       case (IfExp(e1, e2, e3), gam) => 
       (typeof(e1,gam), typeof(e2, gam), typeof(e3, gam)) match {
-        case (BooleanType, x, y) if x==y => x
-        case _ => throw new IllTyped(false)
+        case (BooleanType, x, y) if (x==y) => x
+        
+        case _ =>{
+          throw new IllTyped(false)
+        }
       }
       
       //Anonfunc
@@ -106,7 +109,7 @@ class Typechecker(val fdefs: NamedFunctionDefs,
       //ANON call    
       case (AnonCallExp(e1, e2), gam) =>
         (typeof(e1, gam), typeof(e2, gam)) match {
-          case (FunctionType(tau1, tau2), tau3) if tau1 == tau3 => tau3
+          case (FunctionType(tau1, tau2), tau3) if tau1 == tau3 => tau2
           case _ => throw new IllTyped(false)
         }
 
@@ -136,24 +139,16 @@ class Typechecker(val fdefs: NamedFunctionDefs,
       case (ConstructorExp(cn, e), gam) if cdefs.contains(cn) =>
         val tau = typeof(e, gam)
         val un = cdefs(cn) 
-        if ((tdefs(un))(cn)==tau) //TODO Is this correct? 
+        if ((tdefs(un))(cn)==tau)  
         UserType(un)
-        else throw new IllTyped(false)
-        
+        else throw new IllTyped(false)      
     
       //Match-up
       // cases: List(TupCase(List(Variable(x), Variable(y), Variable(z)),VariableExp(Variable(x))))
       case (MatchExp(e1, cases), gam) => 
         (typeof(e1, gam)) match {
           case TupleType(tau1) => 
-            // println("Tau1: "+tau1)            
-            cases match {
-              // case ConstructorCase(cn, x, e2):: List()  => 
-                // val gamp = tupGamma(x ::List() ,tau1, gam )
-                // typeof(e2, gamp)
-
-
-              
+            cases match {             
               case TupCase(xs, e3) :: List() => 
                 if (xs.length != tau1.length) throw new IllTyped(false)
                 else {
@@ -163,13 +158,11 @@ class Typechecker(val fdefs: NamedFunctionDefs,
               case _ => throw new IllTyped(false)
             }
             
-          //   //TODO Ta med if 
           case UserType(un) if tdefs.contains(un) =>
             casesSane(cases, un)
             val tau11 = casesTypes(cases, gam, tdefs(un))
             val tau12 = asSingleton(tau11)
-            tau12 
-            
+            tau12             
           case _ => throw new IllTyped(false) 
         }        
       case _ => throw new IllTyped(false) 
