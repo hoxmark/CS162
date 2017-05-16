@@ -517,7 +517,7 @@ object Images {
   // ImgGray is turned into a corresponding Colour in the ImgClr.
   // !!FILL ME IN
 
-  val gray2clr = lift1((v:Value)=> Colour(1,v,v,v))
+  val gray2clr = lift1((v:Value)=> Colour(v,v,v,1))
 }
 
 // the functions dealing with spatial transforms on images. we provide
@@ -577,7 +577,9 @@ object SpatialTransforms {
   //  where |pt| is the distance from pt to the origin.  You may find
   //  the dist and rotatePt methods useful here.
   // !!FILL ME IN
-  def swirlPt(theta: Double): TransformPt = (p) => Point(p.x*dist(p) * (2 * PI/theta), p.y * dist(p) * (2 * PI/theta)) 
+
+  def swirlPt(theta: Double): TransformPt = (p:Point) => rotatePt(dist(p) * (2*PI/theta))(p)
+  // def swirlPt(theta: Double): TransformPt = (p) => Point(p.x*dist(p) * (2 * PI/theta), p.y * dist(p) * (2 * PI/theta)) 
 
   // Define a method named 'polarXf' that:
   // -Takes a TransformPlr, and
@@ -608,34 +610,50 @@ object SpatialTransforms {
   // intuitively expect we must use the inverse transformation on the
   // image. to make this easier, we'll define below versions of the
   // above transformations that automatically use the inverse argument
-  // so that we get the results we expect.
+  // so that we get the results we expect
+
 
   // Define a generic method named 'translate' that:
   // -Takes a Vector, and
   // -Returns a Filter that translates an image with translatePt using
   //  the negation of the provided vector
   // !!FILL ME IN
-  def translate(v:Vector) 
+  // def translate[A](v: Vector): Filter[A] = (tr) => (pt) => (tr(pt))translatePt(v.neg)
+
+
+//   case class Vector(x: Double, y: Double) {
+//   def neg = Vector(-x, -y)
+//   def inverse = Vector(1/x, 1/y)
+// }
+//  type Filter[A]    = Img[A] => Img[A]
+//translate(Vector(5, 3))(s => s)(Point(2, 3)), Point(-3.0, 0.0)),
+
+  // def translate[A](v:Vector): Filter[A] = (translatePt) => (pt) => translatePt(Point(pt.x + v.inverse.x, pt.y + v.inverse.y))
+
+  
+  // def translate[A](v:Vector): Filter[A] = (translatePt) => (pt) => translatePt(Point(pt.x + v.inverse.x, pt.y + v.inverse.y))
 
   // Define a generic method named 'scale' that:
   // -Takes a Vector, and
   // -Returns a Filter that scales an image with scalePt
   //  using the inverse of that vector.
   // !!FILL ME IN
-
+  def scale[A](v: Vector): Filter[A] = (scalePt) => pt => scalePt(Point(pt.x * v.inverse.x, pt.y * v.inverse.y))
 
   // Define a generic method named 'rotate' that:
   // -Takes a Double representing an angle, and
   // -Returns a Filter that rotates an image with rotatePt using
   //  the negation of that angle.
   // !!FILL ME IN
-
+  def rotate[A](tetha: Double):Filter[A] = (transformPt:TransformPt) => (pt) => transformPt(pt)(-tetha)
 
   // Define a generic method named 'swirl' that:
   // -Takes a Double representing an angle, and
   // -Returns a Filter that swirls an image with swirlPt using
   //  the negation of that angle.
   // !!FILL ME IN
+
+  // def swirl(tetha:Double): Filter[A] 
 }
 
 // the functions dealing with mask algebra, i.e., combining boolean
@@ -646,21 +664,22 @@ object Masking {
   // from Images; thus yielding an ImgMask that is always true at
   // every point.
   // !!FILL ME IN
-
+  val fullM = lift0(true)
 
   // Define a function named 'emptyM' using one of the lift methods
   // from Images; thus yielding an ImgMask that is always false at
   // every point.
   // !!FILL ME IN
-
+  val emptyM = lift0(false)
 
   // Define a function named 'notM' using one of the lift methods from
   // Images; thus yielding a function that returns the negation of its
   // input: taking an ImgMask as argument and returning an ImgMask
   // whose value at a position is true iff the argument's value at
   // that position was false.
+  // def lift1[A,B]( func: A => B): Img[A] => Img[B] = (aa:Img[A]) => (pt) => func(aa(pt))
   // !!FILL ME IN
-
+  val notM = lift1((a:Boolean)=> if(a) false else true)
 
   // Define a function named 'intersectM' using one of the lift
   // methods from Images; thus yielding a function that returns the
@@ -668,7 +687,7 @@ object Masking {
   // and returning an ImgMask whose value at a position is true iff
   // both argument's values at that position were true.
   // !!FILL ME IN
-
+  val intersectM = lift2((a: Boolean, b:Boolean) => if(a & b) true else false)
 
   // Define a function named 'unionM' using one of the lift methods
   // from Images; thus yielding a function that returns the union of
@@ -676,7 +695,8 @@ object Masking {
   // ImgMask whose value at a position is true if either argument's
   // value at that position was true.
   // !!FILL ME IN
-
+  val unionM = lift2((a: Boolean, b:Boolean) => if(a | b) true else false)
+  
 
   // Define a function named 'xorM' using one of the lift methods from
   // Images; thus yielding a function that returns the XOR of its two
@@ -684,6 +704,7 @@ object Masking {
   // whose value at a position is true if exactly one argument's value
   // at that position was true.
   // !!FILL ME IN
+  val xorM = lift2((a: Boolean, b:Boolean) => if(a ^ b) true else false)
 
 
   // Define a function named 'diffM' in terms of a subset of
@@ -693,6 +714,8 @@ object Masking {
   // arguments and returning an ImgMask whose value at a position is
   // true iff that position was true in X but not in Y.
   // !!FILL ME IN
+  //TODO FIX
+  val diffM = lift2((a: Boolean, b:Boolean) => if( intersectM(a, notM(b))) true else false)
 }
 
 
