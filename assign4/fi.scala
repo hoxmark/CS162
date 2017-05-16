@@ -621,12 +621,17 @@ object SpatialTransforms {
   // def translate[A](v: Vector): Filter[A] = (tr) => (pt) => (tr(pt))translatePt(v.neg)
 
 
+  def translate[A](v:Vector): Filter[A] = (func:Img[A]) => (pt) => func(translatePt(v.neg)(pt))
+
+
 //   case class Vector(x: Double, y: Double) {
 //   def neg = Vector(-x, -y)
 //   def inverse = Vector(1/x, 1/y)
 // }
 //  type Filter[A]    = Img[A] => Img[A]
 //translate(Vector(5, 3))(s => s)(Point(2, 3)), Point(-3.0, 0.0)),
+
+  // def translate[A](v:Vector): Filter[A] = (in => a:A) => (pt:Point) => translatePt(v.neg)
 
   // def translate[A](v:Vector): Filter[A] = (translatePt) => (pt) => translatePt(Point(pt.x + v.inverse.x, pt.y + v.inverse.y))
 
@@ -638,22 +643,24 @@ object SpatialTransforms {
   // -Returns a Filter that scales an image with scalePt
   //  using the inverse of that vector.
   // !!FILL ME IN
-  def scale[A](v: Vector): Filter[A] = (scalePt) => pt => scalePt(Point(pt.x * v.inverse.x, pt.y * v.inverse.y))
+  // def scale[A](v: Vector): Filter[A] = (scalePt) => pt => scalePt(Point(pt.x * v.inverse.x, pt.y * v.inverse.y))
+  def scale[A](v:Vector): Filter[A] = (func: Img[A]) => (pt) => func(scalePt(v.inverse)(pt))
 
   // Define a generic method named 'rotate' that:
   // -Takes a Double representing an angle, and
   // -Returns a Filter that rotates an image with rotatePt using
   //  the negation of that angle.
   // !!FILL ME IN
-  def rotate[A](tetha: Double):Filter[A] = (transformPt:TransformPt) => (pt) => transformPt(pt)(-tetha)
+  // def rotate[A](tetha: Double) = (a:Img[A]) => (pt) => rotatePt(-tetha)(pt)
 
+  def rotate[A](tetha: Double): Filter[A] = (func:Img[A]) => (pt) => func(rotatePt(-tetha)(pt))
   // Define a generic method named 'swirl' that:
   // -Takes a Double representing an angle, and
   // -Returns a Filter that swirls an image with swirlPt using
   //  the negation of that angle.
   // !!FILL ME IN
 
-  // def swirl(tetha:Double): Filter[A] 
+  def swirl[A](tetha:Double): Filter[A] = (func:Img[A]) => (pt) => func(swirlPt(-tetha)(pt))
 }
 
 // the functions dealing with mask algebra, i.e., combining boolean
@@ -715,7 +722,7 @@ object Masking {
   // true iff that position was true in X but not in Y.
   // !!FILL ME IN
   //TODO FIX
-  val diffM = lift2((a: Boolean, b:Boolean) => if( intersectM(a, notM(b))) true else false)
+  val diffM = lift2((a: Boolean, b:Boolean) => if( a & !b) true else false)
 }
 
 
