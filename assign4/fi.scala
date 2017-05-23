@@ -509,7 +509,7 @@ object Images {
   // ImgMask as argument and returns an ImgClr where a true value in
   // the ImgMask is black in the ImgClr and a false value is white.
   // !!FILL ME IN
-  val msk2clr = lift1((b:Boolean)=> if(b) Colour(1,1,1,1) else Colour(0,0,0,1))
+  val msk2clr = lift1((b:Boolean)=> if(b)  Colour(0,0,0,1) else Colour(1,1,1,1))
 
   // Define a function 'gray2clr' that uses one of the lifting methods
   // on an anonymous function; thus yielding a function that takes a
@@ -624,18 +624,14 @@ object SpatialTransforms {
   def translate[A](v:Vector): Filter[A] = (func:Img[A]) => (pt) => func(translatePt(v.neg)(pt))
 
 
-//   case class Vector(x: Double, y: Double) {
-//   def neg = Vector(-x, -y)
-//   def inverse = Vector(1/x, 1/y)
-// }
-//  type Filter[A]    = Img[A] => Img[A]
-//translate(Vector(5, 3))(s => s)(Point(2, 3)), Point(-3.0, 0.0)),
-
+  //   case class Vector(x: Double, y: Double) {
+  //   def neg = Vector(-x, -y)
+  //   def inverse = Vector(1/x, 1/y)
+  // }
+  //  type Filter[A]    = Img[A] => Img[A]
+  //translate(Vector(5, 3))(s => s)(Point(2, 3)), Point(-3.0, 0.0)),
   // def translate[A](v:Vector): Filter[A] = (in => a:A) => (pt:Point) => translatePt(v.neg)
-
-  // def translate[A](v:Vector): Filter[A] = (translatePt) => (pt) => translatePt(Point(pt.x + v.inverse.x, pt.y + v.inverse.y))
-
-  
+  // def translate[A](v:Vector): Filter[A] = (translatePt) => (pt) => translatePt(Point(pt.x + v.inverse.x, pt.y + v.inverse.y))  
   // def translate[A](v:Vector): Filter[A] = (translatePt) => (pt) => translatePt(Point(pt.x + v.inverse.x, pt.y + v.inverse.y))
 
   // Define a generic method named 'scale' that:
@@ -722,7 +718,13 @@ object Masking {
   // true iff that position was true in X but not in Y.
   // !!FILL ME IN
   //TODO FIX
-  val diffM = lift2((a: Boolean, b:Boolean) => if( a & !b) true else false)
+  // type ImgMask = Img[Boolean]
+  // Test("diffM", () => diffM(p => p.x > 10)(p => p.x < 10)(Point(10, 100)), false))
+  
+
+  // val diffM = lift2((a: Boolean, b:Boolean) => if( a & !b) true else false)
+  val diffM = (x: ImgMask) => (y: ImgMask)  => intersectM(x)(notM(y)) 
+
 }
 
 

@@ -1,0 +1,6 @@
+// Notes from class: 
+Named function has changed. 
+4
+
+typerephel([A->Int], A)
+
