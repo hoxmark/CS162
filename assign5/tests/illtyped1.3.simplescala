@@ -1,0 +1,4 @@
+algebraic Option = Some(Int) | None(Unit)
+Some("string")
+;;;
+ILLTYPED

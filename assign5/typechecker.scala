@@ -302,6 +302,8 @@ class Typechecker(val fdefs: NamedFunctionDefs,
           val tau2 = m(cn)
           val tau2p = typeReplace(bigT, taus, tau2)
 
+          //Sjekk om Lengden av storeT er like lengden til taus/ tau1
+          //
 
           // if ((tdefs(un))(cn)==tau)  
           UserType(un, taus)
