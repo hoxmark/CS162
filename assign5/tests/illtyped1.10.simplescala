@@ -1,4 +1,4 @@
-def id(x: Int): Int = x
-id("string")
+def id[A](x: Int): Int = x
+id[A]("string")
 ;;;
 ILLTYPED

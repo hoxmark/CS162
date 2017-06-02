@@ -1,4 +1,4 @@
-algebraic Option = Some(Int) | None(Unit)
-Some("string")
+algebraic Option[A] = Some(A) | None(Unit)
+Some[Intger]("string")
 ;;;
 ILLTYPED

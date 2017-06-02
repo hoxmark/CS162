@@ -257,9 +257,11 @@ class Typechecker(val fdefs: NamedFunctionDefs,
           if (typeOkList(tau1)){
             val tup = fdefs(fn) 
             // val tau2pp = typeof(e, gam)
+            val bigT = tup._1
             val tau2p = typeReplace(tup._1, tau1, tup._2)
             val tau3p = typeReplace(tup._1, tau1, tup._3)
 
+            if (bigT.length != tau1.length) throw new IllTyped(false)
 
             tau3p
 
@@ -306,30 +308,10 @@ class Typechecker(val fdefs: NamedFunctionDefs,
           //
 
           // if ((tdefs(un))(cn)==tau)  
-          UserType(un, taus)
+            UserType(un, taus)
           // else throw new IllTyped(false)      
       
-        // Match-up
-        // case (MatchExp(e1, cases), gam) => 
-        //   (typeof(e1, gam)) match {
-        //     case TupleType(tau1) => 
-        //       cases match {             
-        //         case TupCase(xs, e3) :: List() => 
-        //           if (xs.length != tau1.length) throw new IllTyped(false)
-        //           else {
-        //             val gamp = tupGamma(xs ,tau1, gam )
-        //             typeof(e3, gamp)                  
-        //           }
-        //         case _ => throw new IllTyped(false)
-        //       }
-              
-        //     case UserType(un) if tdefs.contains(un) =>
-        //       casesSane(cases, un)
-        //       val tau11 = casesTypes(cases, gam, tdefs(un))
-        //       val tau12 = asSingleton(tau11)
-        //       tau12             
-        //     case _ => throw new IllTyped(false) 
-        //   }        
+        // Match-up        
         case (MatchExp(e1, cases), gam) => 
           (typeof(e1, gam)) match {
             case TupleType(tau1) => 
@@ -347,9 +329,11 @@ class Typechecker(val fdefs: NamedFunctionDefs,
               casesSane(cases, un)
               val tup = tdefs(un)
               val bigT = tup._1
-              val m = tup._2
+              val m = tup._2 
               val tau2 = casesTypes(cases, gam, bigT, taus, m)
               val tau3 = asSingleton(tau2)
+              if (bigT.length != taus.length) throw new IllTyped(false)
+              
               tau3             
             case _ => throw new IllTyped(false) 
           }        

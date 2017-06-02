@@ -1,10 +1,10 @@
-def add(n1: Nat): Nat => Nat =
+def add[A](n1: Nat): Nat => Nat =
   (n2: Nat) =>
   n1 match {
     case Succ(n1MinusOne) =>
-      Succ(add(n1MinusOne)(n2))
+      Succ[A](add(n1MinusOne)(n2))
     case Zero(x) => n2
   }
-add("string")
+add[A]("string")
 ;;;
 ILLTYPED

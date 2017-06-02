@@ -1,0 +1,55 @@
+Notesf from lesson: 
+
+
+a(a3, N).
+
+b(1,b1).
+b(2, B).
+b(N,b3).
+
+c(X,Y) :-
+        a(X,N), 
+        b(N,Y).
+
+d(X,Y) :-
+        a(X,N)
+        b(Y,N).
+
+
+-----------
+Unification: 
+
+FIRST: 
+call : a(X,N)
+-----
+a(a1,1)
+
+X=a1
+N=1
+
+
+x=1
+1=x 
+Det går begge veier. Som i mattematikk. 
+
+
+What is a1? 
+a1 is an atom. Tou can think of it as a string. 
+
+
+SECOND: 
+call: a(A,N)
+
+    Same as a(a1, 1)
+            a(A,2)
+
+X=A
+N=Z
+
+
+---------
+
+
+Storebokstaver = variabler 
+små bokstaver = atoms 
+tall          = integers
