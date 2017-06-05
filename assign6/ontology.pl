@@ -83,7 +83,49 @@ part_of('organelle membrane', 'membrane-bounded organelle').
 
 % toisaroot: StartingPoint, PathToRoot
 
+toisaroot('cellular component', ['cellular component']).
+
+toisaroot(X,L):-
+    is_a(X, Y),
+    toisaroot(Y,L1), 
+    L = [X|L1]. 
+
+
 % subconcept: TheSubConcept, ThingItIsASubConceptOf
+
+subconcept(TheSubConcept, ThingItIsASubConceptOf):-
+    part_of(TheSubConcept, ThingItIsASubConceptOf). 
+
+subconcept(TheSubConcept, ThingItIsASubConceptOf):-
+    is_a(TheSubConcept, ThingItIsASubConceptOf). 
+
+
+subconcept(C1, C3):-
+    is_a(C2, C3),
+    % part_of(C2, C3),
+    subconcept(C1, C2).
+
+subconcept(C1, C3):-
+    % is_a(C2, C3),
+    part_of(C2, C3),
+    subconcept(C1, C2).
+    
+% subconcept(TheSubConcept, ThingItIsASubConceptOf):-
+%     part_of(Y, ThingItIsASubConceptOf), 
+%     subconcept(TheSubConcept, Y).
+
+
+% subconcept(C1, C3):-
+%     part_of(C2, C3), 
+%     subconcept(C1, C2).
+
+
+
+% subconcept(TheSubConcept, ThingItIsASubConceptOf):-
+%     part_of(TheSubConcept, X), 
+%     subconcept(X, ThingItIsASubConceptOf).
+
+
 
 runTest(Test) :-
     format('Running ~w: ', [Test]),

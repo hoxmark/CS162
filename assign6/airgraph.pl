@@ -21,6 +21,9 @@ flight(kk0018, fra, ams, 65).
 flight(lf1032, vie, ams, 50).
 
 % pathMaxCost: Source, Destination, MaxCost, Flights, ActualCost
+% Obs for the < 
+
+
 
 runTest(Test) :-
     format('Running ~w: ', [Test]),

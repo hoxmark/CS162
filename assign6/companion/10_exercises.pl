@@ -12,43 +12,43 @@
 % ANSWER: true
 
 % QUERY: 2 = 2.
-% ANSWER: ???
+% ANSWER: true
 
 % QUERY: 1 = 2.
 % ANSWER: false
 
 % QUERY: 2 = 3.
-% ANSWER: ???
+% ANSWER: false
 
 % QUERY: X = 1.
 % ANSWER: X = 1
 
 % QUERY: X = 2.
-% ANSWER: ???
+% ANSWER: X = 2. 
 
 % QUERY: 1 = X.
 % ANSWER: X = 1
 
 % QUERY: 2 = X.
-% ANSWER: ???
+% ANSWER: X = 2
 
 % QUERY: foo = foo.
 % ANSWER: true
 
 % QUERY: bar = bar.
-% ANSWER: ???
+% ANSWER: true
 
 % QUERY: foo = bar.
 % ANSWER: false
 
 % QUERY: bar = baz.
-% ANSWER: ???
+% ANSWER: false
 
 % QUERY: X = foo.
 % ANSWER: X = foo
 
 % QUERY: bar = X.
-% ANSWER: ???
+% ANSWER: X = bar
 
 % QUERY: X = X.
 % ANSWER: true
@@ -63,28 +63,32 @@
 % ANSWER: X = 1
 
 % QUERY: b(X) = b(1).
-% ANSWER: ???
+% ANSWER: X = 1
 
 % QUERY: a(X, Y) = a(1).
 % ANSWER: false
 
 % QUERY: a(1) = a(X, Y).
-% ANSWER: ???
+% ANSWER: false
 
 % QUERY: a(X) = b(1).
 % ANSWER: false
 
 % QUERY: b(1) = c(1).
-% ANSWER: ???
+% ANSWER: false
 
 % QUERY: a(b,c) = a(X,Y).
-% ANSWER: ???
+% ANSWER: 
+# X = b,
+# Y = c.
 
 % QUERY: a(X,c(d,X)) = a(2,c(d,Y)).
-% ANSWER: ???
+% ANSWER: X = Y, Y = 2.
 
 % QUERY: a(X,Y) = a(b(c,Y),Z).
-% ANSWER: ???
+% ANSWER: 
+# X = b(c, Z),
+# Y = Z.
 
 % QUERY: tree(left, root, Right) = tree(left, root, tree(a, b, tree(c, d, e))).
-% ANSWER: ???
+% ANSWER: Right = tree(a, b, tree(c, d, e)).

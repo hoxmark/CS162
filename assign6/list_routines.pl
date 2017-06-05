@@ -6,11 +6,11 @@
 % Determines if the third list is the result of appending
 % the first two lists together.
 % Example:
-%
+
 % myAppend([1, 2, 3], [], L). % L = [1, 2, 3]
 % myAppend([], [1, 2, 3], L). % L = [1, 2, 3]
 % myAppend([1, 2], [3, 4], L). % L = [1, 2, 3, 4]
-%
+
 
 % BASE CASE - appending an empty list onto some other
 % list results in the other list
@@ -51,10 +51,13 @@ myMember(X, [_|R]) :-
 
 % BASE CASE - The list begins with X and Y.
 % ---FILL ME IN---
+myNextto(X, Y, [X,Y|Z]).
 
 % RECURSIVE CASE - The head of the list isn't interesting.
 % Recursively process the tail.
-% ---FILL ME IN---
+% % ---FILL ME IN---
+myNextto(X, Y, [H|T]) :-
+    myNextto(X,Y,T).
 
 
 % myNth0: Takes an index, a list, and a result element.  Gets the
@@ -68,12 +71,16 @@ myMember(X, [_|R]) :-
 % BASE CASE - We have 0 and a non-empty list.  The result
 % should simply be the head of the non-empty list.
 % ---FILL ME IN---
+myNth0(0, [H|T], H).
 
 % RECURSIVE CASE - We have a number greater than 0 and a
 % non-empty list.  Process the tail of the list recursively
 % with the number - 1.  Keep in mind that to perform any sort
 % of arithmetic, we must use `is` in Prolog.
 % ---FILL ME IN---
+myNth0(I, [H|T], R).
+    I1 is I - 1,
+    myNth0(I1, T, R).
 
 % myLast: Gets the last element of a list (the first parameter),
 % returning it in the second parameter.  For example:
@@ -86,10 +93,14 @@ myMember(X, [_|R]) :-
 % BASE CASE - A list that contains one element.  The last element
 % is that element directly.
 % ---FILL ME IN---
+myLast([H|_], H).
 
 % RECURSIVE CASE - A list that contains more than one element.
 % Recursively process on the list, starting from the second element
 % ---FILL ME IN---
+myLast([H|T], R) :-
+    myLast(T, R).
+    
 
 % myLength: takes an input list, and returns the length of the input
 % list in the second parameter.  For example:
@@ -98,6 +109,11 @@ myMember(X, [_|R]) :-
 % myLength([0, 1, 2], I). % I = 3
 
 % ---FILL ME IN---
+myLength([], 0). 
+
+myLength([H|T], R):-
+    myLength(T, R1),
+    R is R1 + 1.
 
 % mySum: takes a list (presumably of integers) and returns their
 % summation in the second parameter.  For example:
@@ -107,12 +123,24 @@ myMember(X, [_|R]) :-
 %
 
 % ---FILL ME IN---
+mySum([], 0).
+
+mySum([H|T], R) :-
+    mySum(T, R1), 
+    R is R1 + H.
 
 % myReverse: takes an input list, and returns the reverse of the input
 % list in the second parameter.  For example:
 %
 % myReverse([], []). % true
 % myReverse([1, 2, 3], L). % L = [3, 2, 1]
+
+myReverse([], []).
+
+myReverse([H|T], L) :- 
+    myReverse(T, L1), 
+    myAppend(L1, [H], L).
+    
 
 % ---FILL ME IN---
 
@@ -126,6 +154,16 @@ myMember(X, [_|R]) :-
 
 % ---FILL ME IN---
 
+myDelete([],D,[]).
+
+myDelete([H|T],D,Result) :- 
+    H=D, 
+    myDelete(T,D,Result).
+
+myDelete([H|T],D,[H|Result]) :- 
+    myDelete(T,D,Result).
+
+    
 runTest(Test) :-
     format('Running ~w: ', [Test]),
     once(call(Test)) ->
@@ -185,9 +223,9 @@ runTests :-
     myAppendTests,
     myMemberTests,
     myNexttoTests,
-    myDeleteTests,
     myNthTests,
     myLastTests,
-    myReverseTests,
     myLengthTests,
+    myReverseTests,
+    myDeleteTests,
     mySumTests.
